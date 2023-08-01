@@ -1,29 +1,32 @@
 {
+  "normed_ed": 0.69,
+  "bleu": 0.21,
   "errors": [
     {
-      "error_message": "missing </a>",
+      "position": "line 1 column 1222",
       "error_type": "Warning",
-      "position": "line 1 column 1222"
+      "error_message": "missing </a>"
     },
     {
-      "error_message": "missing </ul>",
+      "position": "line 1 column 1168",
       "error_type": "Warning",
-      "position": "line 1 column 1168"
+      "error_message": "missing </ul>"
     },
     {
-      "error_message": "missing </div>",
+      "position": "line 1 column 1094",
       "error_type": "Warning",
-      "position": "line 1 column 1094"
+      "error_message": "missing </div>"
     },
     {
-      "error_message": "missing </nav>",
+      "position": "line 1 column 840",
       "error_type": "Warning",
-      "position": "line 1 column 840"
+      "error_message": "missing </nav>"
     },
     {
-      "error_message": "missing </div>",
+      "position": "line 1 column 789",
       "error_type": "Warning",
-      "position": "line 1 column 789"
+      "error_message": "missing </div>"
     }
-  ]
+  ],
+  "ted": 53.0
 }

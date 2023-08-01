@@ -1,3 +1,6 @@
 {
-  "errors": []
+  "normed_ed": 0.78,
+  "bleu": 0.04,
+  "errors": [],
+  "ted": 70.0
 }

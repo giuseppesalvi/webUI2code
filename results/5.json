@@ -1,19 +1,22 @@
 {
+  "normed_ed": 0.49,
+  "bleu": 0.71,
   "errors": [
     {
-      "error_message": "missing </a>",
+      "position": "line 1 column 1334",
       "error_type": "Warning",
-      "position": "line 1 column 1334"
+      "error_message": "missing </a>"
     },
     {
-      "error_message": "discarding unexpected </div>",
+      "position": "line 1 column 4346",
       "error_type": "Warning",
-      "position": "line 1 column 4346"
+      "error_message": "discarding unexpected </div>"
     },
     {
-      "error_message": "discarding unexpected </div>",
+      "position": "line 1 column 4353",
       "error_type": "Warning",
-      "position": "line 1 column 4353"
+      "error_message": "discarding unexpected </div>"
     }
-  ]
+  ],
+  "ted": 29.0
 }

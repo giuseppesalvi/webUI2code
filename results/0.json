@@ -1,19 +1,22 @@
 {
+  "normed_ed": 0.37,
+  "bleu": 0.76,
   "errors": [
     {
-      "error_message": "missing </form>",
+      "position": "line 1 column 1899",
       "error_type": "Warning",
-      "position": "line 1 column 1899"
+      "error_message": "missing </form>"
     },
     {
-      "error_message": "missing </div>",
+      "position": "line 1 column 1427",
       "error_type": "Warning",
-      "position": "line 1 column 1427"
+      "error_message": "missing </div>"
     },
     {
-      "error_message": "missing </div>",
+      "position": "line 1 column 789",
       "error_type": "Warning",
-      "position": "line 1 column 789"
+      "error_message": "missing </div>"
     }
-  ]
+  ],
+  "ted": 27.0
 }

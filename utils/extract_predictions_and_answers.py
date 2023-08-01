@@ -1,24 +1,35 @@
 import argparse
 from tqdm import tqdm
+import json
 
 
 def extract_predictions_and_answers(input_file: str, output_folder: str):
     with open(input_file, "r") as f:
 
-        counter_prediction = 0
-        counter_answer = 0
+        counter = 0
         for line in tqdm(f.readlines()):
             parts = line.lstrip().split()
             if parts:
                 keyword = parts[0]
                 if keyword == "Answer:":
-                    with open(f"{output_folder}{counter_answer}_answer.html", "w") as fa:
-                        print(" ".join(line.lstrip().split()[1:]), file=fa)
-                    counter_answer += 1
+                    with open(f"{output_folder}{counter}_answer.html", "w") as f:
+                        print(" ".join(parts[1:]), file=f)
                 elif keyword == "Prediction:":
-                    with open(f"{output_folder}{counter_prediction}_prediction.html", "w") as fp:
-                        print(" ".join(line.lstrip().split()[1:]), file=fp)
-                        counter_prediction += 1
+                    with open(f"{output_folder}{counter}_prediction.html", "w") as f:
+                        print(" ".join(parts[1:]), file=f)
+                elif keyword == "Normed":
+                    with open(f"{output_folder}{counter}.json", "w") as f:
+                        # The line starts with "Normed ED:", first two parts must be discarded
+                        json.dump({"normed_ed": float(parts[2])}, f, indent=2)
+                elif keyword == "Bleu:":
+                    with open(f"{output_folder}{counter}.json", "r") as f:
+                        dict_tmp = json.load(f)
+                    dict_tmp["bleu"] = float(parts[1])
+                    with open(f"{output_folder}{counter}.json", "w") as f:
+                        json.dump(dict_tmp, f, indent=2)
+                    
+                    # Last line for each sample processed, pass to the next one
+                    counter+= 1
     return
 
 

@@ -1,0 +1,3 @@
+[submodule "utils/html_ted"]
+	path = utils/html_ted
+	url = git@github.com:giuseppesalvi/html-tree-edit-distance.git

@@ -1,14 +1,17 @@
 {
+  "normed_ed": 0.37,
+  "bleu": 0.93,
   "errors": [
     {
-      "error_message": "missing </div>",
+      "position": "line 1 column 1754",
       "error_type": "Warning",
-      "position": "line 1 column 1754"
+      "error_message": "missing </div>"
     },
     {
-      "error_message": "missing </div>",
+      "position": "line 1 column 789",
       "error_type": "Warning",
-      "position": "line 1 column 789"
+      "error_message": "missing </div>"
     }
-  ]
+  ],
+  "ted": 17.0
 }

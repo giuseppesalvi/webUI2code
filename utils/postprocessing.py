@@ -5,6 +5,27 @@ import json
 from tqdm import tqdm
 
 
+def process_files(folder):
+    html_files = [file for file in os.listdir(folder) if file.endswith('.html')] 
+    for html_file_path in tqdm(html_files):
+        if html_file_path.endswith("_processed.html"):
+            # Already processed
+            continue
+
+        output_file_path = html_file_path.split(".html")[0] + "_processed.html"
+        errors_from_tidy = process_html(
+            folder + html_file_path, folder + output_file_path)
+
+        if html_file_path.endswith("prediction.html"):
+            # Save errors in json file for predicted files
+            with open(folder + html_file_path.split("_")[0] + ".json", "r") as f:
+                dict_tmp = json.load(f)
+
+            with open(folder + html_file_path.split("_")[0] + ".json", "w") as f:
+                dict_tmp["errors"] =  cleanup_errors_from_tidy(errors_from_tidy)
+                json.dump(dict_tmp, f, indent=2)
+
+
 def process_html(input_file_path, output_file_path):
     command = f"tidy -indent -wrap 0 --drop-empty-elements no {input_file_path}"
 
@@ -51,21 +72,4 @@ if __name__ == "__main__":
         if not folder.endswith("/"):
             folder = folder + "/"
 
-    for html_file_path in tqdm(os.listdir(folder)):
-        if not html_file_path.endswith(".html"):
-            # Not an html file
-            continue
-        if html_file_path.endswith("_processed.html"):
-            # Already processed
-            continue
-
-        output_file_path = html_file_path.split(".html")[0] + "_processed.html"
-        errors_from_tidy = process_html(
-            folder + html_file_path, folder + output_file_path)
-
-        if html_file_path.endswith("prediction.html"):
-            # Save errors in json file for predicted files
-            with open(folder + html_file_path.split("_")[0] + ".json", "w") as f:
-                json_obj = {
-                    "errors": cleanup_errors_from_tidy(errors_from_tidy)}
-                json.dump(json_obj, f, sort_keys=True, indent=2)
+    process_files(folder)
