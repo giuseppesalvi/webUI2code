@@ -1,4 +1,5 @@
 import argparse
+from tqdm import tqdm
 
 
 def extract_predictions_and_answers(input_file: str, output_folder: str):
@@ -6,7 +7,7 @@ def extract_predictions_and_answers(input_file: str, output_folder: str):
 
         counter_prediction = 0
         counter_answer = 0
-        for line in f.readlines():
+        for line in tqdm(f.readlines()):
             parts = line.lstrip().split()
             if parts:
                 keyword = parts[0]
@@ -28,8 +29,10 @@ if __name__ == "__main__":
     # Initialize args parser
     parser = argparse.ArgumentParser(description="Extract original files and predictions from input text file and save them separately",
                                      usage="python3 extract_predictions_and_answers.py --input_file {input_file} --output_folder {output_folder}")
-    parser.add_argument("--input_file", help="Input file with predictions and answers logged during validation / testing loop")
-    parser.add_argument("--output_folder", help="Folder where the output files are saved")
+    parser.add_argument(
+        "--input_file", help="Input file with predictions and answers logged during validation / testing loop")
+    parser.add_argument("--output_folder",
+                        help="Folder where the output files are saved")
 
     # Read args
     args = parser.parse_args()
