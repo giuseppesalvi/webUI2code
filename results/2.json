@@ -1,0 +1,44 @@
+{
+  "errors": [
+    {
+      "error_message": "missing </span> before </p>",
+      "error_type": "Warning",
+      "position": "line 1 column 2938"
+    },
+    {
+      "error_message": "inserting implicit <span>",
+      "error_type": "Warning",
+      "position": "line 1 column 3259"
+    },
+    {
+      "error_message": "missing </span> before <h1>",
+      "error_type": "Warning",
+      "position": "line 1 column 3259"
+    },
+    {
+      "error_message": "inserting implicit <span>",
+      "error_type": "Warning",
+      "position": "line 1 column 3305"
+    },
+    {
+      "error_message": "inserting implicit <span>",
+      "error_type": "Warning",
+      "position": "line 1 column 3466"
+    },
+    {
+      "error_message": "missing </span> before <div>",
+      "error_type": "Warning",
+      "position": "line 1 column 3466"
+    },
+    {
+      "error_message": "inserting implicit <span>",
+      "error_type": "Warning",
+      "position": "line 1 column 3490"
+    },
+    {
+      "error_message": "missing </div>",
+      "error_type": "Warning",
+      "position": "line 1 column 789"
+    }
+  ]
+}

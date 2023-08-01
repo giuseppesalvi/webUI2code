@@ -1,0 +1,29 @@
+{
+  "errors": [
+    {
+      "error_message": "missing </a>",
+      "error_type": "Warning",
+      "position": "line 1 column 1222"
+    },
+    {
+      "error_message": "missing </ul>",
+      "error_type": "Warning",
+      "position": "line 1 column 1168"
+    },
+    {
+      "error_message": "missing </div>",
+      "error_type": "Warning",
+      "position": "line 1 column 1094"
+    },
+    {
+      "error_message": "missing </nav>",
+      "error_type": "Warning",
+      "position": "line 1 column 840"
+    },
+    {
+      "error_message": "missing </div>",
+      "error_type": "Warning",
+      "position": "line 1 column 789"
+    }
+  ]
+}

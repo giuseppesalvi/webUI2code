@@ -1,0 +1,19 @@
+{
+  "errors": [
+    {
+      "error_message": "discarding unexpected </header>",
+      "error_type": "Warning",
+      "position": "line 1 column 1988"
+    },
+    {
+      "error_message": "missing </div>",
+      "error_type": "Warning",
+      "position": "line 1 column 1756"
+    },
+    {
+      "error_message": "missing </div>",
+      "error_type": "Warning",
+      "position": "line 1 column 789"
+    }
+  ]
+}
