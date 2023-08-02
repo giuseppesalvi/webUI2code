@@ -13,6 +13,8 @@ def calculate_ssim_index(imageA_path, imageB_path, index_sample):
     imageA = cv2.imread(imageA_path)
     imageB = cv2.imread(imageB_path)
 
+    imageB = cv2.resize(imageB, (imageA.shape[1], imageA.shape[0]))
+
     imageA_gray = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
     imageB_gray = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
 
@@ -25,7 +27,7 @@ def calculate_ssim_index(imageA_path, imageB_path, index_sample):
     ax_ssim.imshow(ssim_map, cmap='Blues', vmin=-1, vmax=1)
     ax_ssim.set_title("SSIM map")
     fig_ssim.colorbar(ax_ssim.imshow(ssim_map, cmap="Blues", vmin=-1, vmax=1), ax=ax_ssim)
-    fig_ssim.savefig(f"{index_sample}_ssim_map.png")
+    fig_ssim.savefig(f"{folder}{index_sample}_ssim_map.png")
 
     # Create a figure for the gradient map
     gradient_magnitude = np.sqrt(np.square(gradient))
@@ -34,7 +36,7 @@ def calculate_ssim_index(imageA_path, imageB_path, index_sample):
     ax_gradient.imshow(gradient_magnitude, cmap="Blues")
     ax_gradient.set_title("Gradient map")
     fig_gradient.colorbar(ax_gradient.imshow(gradient_magnitude, cmap="Blues"), ax=ax_gradient)
-    fig_gradient.savefig(f"{index_sample}_gradient_map.png")
+    fig_gradient.savefig(f"{folder}{index_sample}_gradient_map.png")
 
     return ssim_index
 
@@ -55,8 +57,8 @@ def calculate_metrics(folder: str):
         ted = calculate_ted_from_file_paths(answer_file_path, prediction_file_path)
 
         # Structural visual similarity
-        answer_png_file_path = folder + json_file.replace(".json", "_answer.png")
-        prediction_png_file_path = folder + json_file.replace(".json", "_prediction_resized.png")
+        answer_png_file_path = folder + json_file.replace(".json", "_answer_processed.png")
+        prediction_png_file_path = folder + json_file.replace(".json", "_prediction_processed.png")
 
         ssim_index = calculate_ssim_index(answer_png_file_path, prediction_png_file_path, json_file.split(".")[0])
 
@@ -68,7 +70,7 @@ def calculate_metrics(folder: str):
 
         with open(folder + json_file, "w") as fw:
             json.dump(json_dict, fw, indent=2)
-    return sum_ted/len(json_files)
+    return sum_ted/len(json_files), sum_ssim_index/len(json_files)
 
 if __name__ == "__main__":
     folder = "results/"
@@ -87,5 +89,6 @@ if __name__ == "__main__":
         if not folder.endswith("/"):
             folder = folder + "/"
 
-    avg_ted = calculate_metrics(folder)
-    print("Avg HTML Tree Edit Distance = ", avg_ted)
+    avg_ted, avg_ssim_index = calculate_metrics(folder)
+    print(f"Avg HTML Tree Edit Distance = {avg_ted:.2f}")
+    print(f"Avg SSIM indesx = {avg_ssim_index:.2f}")

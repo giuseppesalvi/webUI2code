@@ -18,5 +18,6 @@
       "error_message": "discarding unexpected </div>"
     }
   ],
-  "ted": 29.0
+  "ted": 29.0,
+  "ssim_index": 0.505959766443089
 }

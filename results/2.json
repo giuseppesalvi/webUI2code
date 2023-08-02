@@ -43,5 +43,6 @@
       "error_message": "missing </div>"
     }
   ],
-  "ted": 42.0
+  "ted": 42.0,
+  "ssim_index": 0.8011352653002138
 }
