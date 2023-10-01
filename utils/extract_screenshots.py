@@ -1,15 +1,73 @@
 import argparse
-
+import os
+import tqdm
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 from webgenerator.ScreenShutter import ScreenShutter
 
-CHROME_DRIVER_PATH = './chromedriver/mac_arm-116.0.5845.96/chromedriver-mac-arm64/chromedriver'
+WAIT_SCREENSHOT = 0
+CLUSTER = True
+COLAB = False
 
+CHROME_DRIVER_PATH = './chromedriver/linux-116.0.5793.0/chromedriver-linux64/chromedriver'
+CHROME_PATH = './chrome/linux-116.0.5793.0/chrome-linux64/chrome'
 
-def extract_screenshots(folder):
-    # Generate multiple webpages and screenshots
-    screen_shutter = ScreenShutter(full_screenshot=False, show_progress=False, input_path=folder,
-                                   output_path="results/", assets_path="utils/webgenerator/Assets/", driver_path=CHROME_DRIVER_PATH)
-    screen_shutter.capture_and_save()
+def get_screenshot(html_file_path):
+    """ Get Screenshot of website URL passed as argument, and save it """
+
+    #print("\nGenerating the screenshot ...")
+    # Set webdriver options
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    if CLUSTER:
+        options.binary_location = CHROME_PATH
+    if COLAB or CLUSTER:
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+
+    # Set window size
+    options.add_argument("--window-size=1280,1024")
+
+    # Start web browser
+    if COLAB:
+        driver = webdriver.Chrome('chromedriver', options=options)
+    else:
+        driver = webdriver.Chrome(service=Service(CHROME_DRIVER_PATH), options=options)
+
+    # Launch URL
+    driver.get("file://" + os.path.abspath(html_file_path))
+
+    # Wait some time to allow popups to show
+    driver.implicitly_wait(WAIT_SCREENSHOT)
+
+    # Obtain browser height and width
+    w = driver.execute_script('return document.body.parentNode.scrollWidth')
+    h = driver.execute_script('return document.body.parentNode.scrollHeight')
+
+    # Set to new window size
+    driver.set_window_size(w, h)
+
+    # Obtain screenshot of page within body tag
+    driver.find_element(By.TAG_NAME, "body").screenshot(html_file_path.replace(".html", ".png"))
+
+    # Close web driver
+    driver.close()
+
+def extract_screenshots(folder, isWebGenerator=False):
+    if isWebGenerator:
+        screen_shutter = ScreenShutter(full_screenshot=False, show_progress=False, input_path=folder,
+                                    output_path="results/", assets_path="utils/webgenerator/Assets/", driver_path=CHROME_DRIVER_PATH)
+        screen_shutter.capture_and_save()
+    else:
+        list_files = os.listdir(folder)
+        filtered_files = [file for file in list_files if file.endswith('.html')]
+
+        # Iterate through all files in the given folder
+        for filename in tqdm(filtered_files):
+            if filename.endswith('.html'):
+                if not os.path.exists(folder + filename.replace(".html", ".png")):
+                        get_screenshot(os.path.join(folder, filename))
 
 
 if __name__ == "__main__":
