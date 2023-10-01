@@ -3,27 +3,14 @@ import argparse
 import os
 import json
 from tqdm import tqdm
-import re
 
-
-def fix_html_spaces(html_code):
-    # Pattern to match HTML tags that don't contain '=' character
-    pattern = r'<[^=]*?>'
-    
-    # Use re.sub to replace the matched pattern by removing spaces from it
-    fixed_html = re.sub(pattern, lambda x: x.group(0).replace(" ", ""), html_code)
-    fixed_html = fixed_html.replace("hre f", "href")
-    fixed_html = fixed_html.replace("ro le", "role")
-    fixed_html = fixed_html.replace("pul l-left", "pull-left")
-    
-    return fixed_html
 
 def process_Pix2Code_html_file(folder, input_file_name, output_file_name):
     with open(folder + input_file_name, "r") as f:
         content = f.read()
 
-    content_with_spaces_fixed = fix_html_spaces(content)
-    content_with_header = content_with_spaces_fixed.replace(
+    #content_with_spaces_fixed = fix_html_spaces(content)
+    content_with_header = content.replace(
         '<html>', '<html> <header> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> <style> .header{margin:20px 0}nav ul.nav-pills li{background-color:#333;border-radius:4px;margin-right:10px}.col-lg-3{width:24%;margin-right:1.333333%}.col-lg-6{width:49%;margin-right:2%}.col-lg-12,.col-lg-3,.col-lg-6{margin-bottom:20px;border-radius:6px;background-color:#f5f5f5;padding:20px}.row .col-lg-3:last-child,.row .col-lg-6:last-child{margin-right:0}footer{padding:20px 0;text-align:center;border-top:1px solid #bbb} </style> <title>Scaffold</title> </header>')
     content_with_footer_and_scripts = content_with_header.replace('</main>', '<footer class="footer"> <p>&copy; Tony Beltramelli 2017</p> </footer> </main> <script src="js/jquery.min.js"></script> <script src="js/bootstrap.min.js"></script>')
 
