@@ -57,26 +57,35 @@ def calculate_ssim_index(folder, imageA_path, imageB_path, index_sample):
 
 
 def calculate_metric(args):
-    json_file, folder = args
+    json_file, folder, pix2codeOriginal = args
+
     with open(folder + json_file, "r") as fr:
             json_dict = json.load(fr)
 
-    answer_file_path = folder + json_file.replace(".json", "_answer_processed.html")
-    prediction_file_path = folder + json_file.replace(".json", "_pred_processed.html")
+    if (pix2codeOriginal):
+        answer_file_path = folder + json_file.replace(".json", "_answer.gui")
+        prediction_file_path = folder + json_file.replace(".json", "_pred.gui")
+    else:
+        answer_file_path = folder + json_file.replace(".json", "_answer_processed.html")
+        prediction_file_path = folder + json_file.replace(".json", "_pred_processed.html")
     
     with open(prediction_file_path, 'r') as f:
         pred = f.read()
-        pred_html = extract_html_tree(pred)
+        if not pix2codeOriginal:
+            pred_html = extract_html_tree(pred)
 
     with open(answer_file_path, 'r') as f:
         answer = f.read()
-        answer_html = extract_html_tree(answer)
+        if not pix2codeOriginal:
+            answer_html = extract_html_tree(answer)
 
     max_len = max(len(pred), len(answer))
 
-    # HTML Tree edit distance
-    ted = calculate_ted(answer_html, pred_html)
-    normalized_ted = ted / max_len 
+    if not pix2codeOriginal:
+        # HTML Tree edit distance
+        ted = calculate_ted(answer_html, pred_html)
+        normalized_ted = ted / max_len 
+    
 
     # Normalized Edit Distance
     ed_score = edit_distance(pred, answer)
@@ -85,10 +94,11 @@ def calculate_metric(args):
     # Bleu Score
     bleu_score = corpus_bleu([[answer]], [pred], smoothing_function=SmoothingFunction().method4)
 
-    # Structural Bleu Score
-    answer_no_texts = remove_texts(answer)
-    pred_no_texts = remove_texts(pred)
-    str_bleu_score = corpus_bleu([[answer_no_texts]], [pred_no_texts], smoothing_function=SmoothingFunction().method4)
+    if not pix2codeOriginal:
+        # Structural Bleu Score
+        answer_no_texts = remove_texts(answer)
+        pred_no_texts = remove_texts(pred)
+        str_bleu_score = corpus_bleu([[answer_no_texts]], [pred_no_texts], smoothing_function=SmoothingFunction().method4)
    
     # Structural visual similarity
     answer_png_file_path = folder + json_file.replace(".json", "_answer_processed.png")
@@ -101,9 +111,12 @@ def calculate_metric(args):
     json_dict["bleu"] = bleu_score
     json_dict["ed"] = ed_score 
     json_dict["n_ed"] = normalized_ed_score
-    json_dict["s_bleu"] = str_bleu_score
-    json_dict["ted"] = ted
-    json_dict["n_ted"] = normalized_ted
+
+    if not pix2codeOriginal:
+        json_dict["s_bleu"] = str_bleu_score
+        json_dict["ted"] = ted
+        json_dict["n_ted"] = normalized_ted
+
     json_dict["ssim_index"] = ssim_index 
     with open(folder + json_file, "w") as fw:
         json.dump(json_dict, fw, indent=2)      
@@ -120,6 +133,9 @@ if __name__ == "__main__":
     parser.add_argument("--folder",
                         help="Folder with files to calculate metrics")
 
+    parser.add_argument("--pix2codeOriginal", action='store_true',
+                        help="Specifies if it is the original experiment on pix2code, with guis and not html files")
+
     # Read args
     args = parser.parse_args()
 
@@ -127,6 +143,7 @@ if __name__ == "__main__":
         folder = args.folder
         if not folder.endswith("/"):
             folder = folder + "/"
+
     json_files= [file for file in os.listdir(folder) if file.endswith('.json')]
     print(f"Number of files: {len(json_files)}")
     start = time.time()
@@ -134,22 +151,22 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(processes=pool_size) as pool:
         results = []
-        for result in tqdm(pool.imap_unordered(func=calculate_metric, iterable=[(filename, folder) for filename in json_files]), total=len(json_files)):
+        for result in tqdm(pool.imap_unordered(func=calculate_metric, iterable=[(filename, folder, args.pix2codeOriginal) for filename in json_files]), total=len(json_files)):
             results.append(result)
 
     teds, ssims, eds, bleus, s_bleus = zip(*results)
-    avg_ted = np.mean(teds)
     avg_ssim_index = np.mean(ssims)
     avg_ed = np.mean(eds)
     avg_bleu = np.mean(bleus)
-    avg_s_bleu = np.mean(s_bleus)
-
-
-
-    print(f"Avg HTML Tree Edit Distance = {avg_ted:.3f}")
     print(f"             Avg SSIM index = {avg_ssim_index:.3f}")
     print(f"   Avg Edit Distance = {avg_ed:.3f}")
     print(f"             Avg Bleu Score = {avg_bleu:.3f}")
+    if not args.pix2codeOriginal:
+        avg_ted = np.mean(teds)
+        avg_s_bleu = np.mean(s_bleus)
+        print(f"Avg HTML Tree Edit Distance = {avg_ted:.3f}")
+
+
     
     print(f"/nExecution time: {time.time() - start}")
     

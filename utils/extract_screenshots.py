@@ -1,17 +1,19 @@
 import argparse
 import os
-import tqdm
+from tqdm import tqdm
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from webgenerator.ScreenShutter import ScreenShutter
 
 WAIT_SCREENSHOT = 0
-CLUSTER = True
+CLUSTER = False 
 COLAB = False
 
-CHROME_DRIVER_PATH = './chromedriver/linux-116.0.5793.0/chromedriver-linux64/chromedriver'
+#CHROME_DRIVER_PATH = './chromedriver/linux-116.0.5793.0/chromedriver-linux64/chromedriver'
 CHROME_PATH = './chrome/linux-116.0.5793.0/chrome-linux64/chrome'
+
+CHROME_DRIVER_PATH = '../../chromedriver/mac_arm-116.0.5845.96/chromedriver-mac-arm64/chromedriver'
 
 def get_screenshot(html_file_path):
     """ Get Screenshot of website URL passed as argument, and save it """
@@ -79,6 +81,8 @@ if __name__ == "__main__":
     parser.add_argument("--folder",
                         help="Folder with html files to extract screenshots from")
 
+    parser.add_argument("--webGenerator", action='store_true',
+                        help="Specifies if we are extracting screenshots using webGenerator screenshotter")
     # Read args
     args = parser.parse_args()
 
@@ -87,4 +91,4 @@ if __name__ == "__main__":
         if not folder.endswith("/"):
             folder = folder + "/"
 
-    extract_screenshots(folder)
+    extract_screenshots(folder, args.webGenerator)
