@@ -1,6 +1,7 @@
-results/synthBootstrap
-results/sketchSynthBootstrap
-results/webUI2Code
-results/pix2code_web_with_html_loremipsum
+results/pix2code/output_test_pix2code.log
 chrome/
 chromedriver/
+utils/extract_predictions_and_answers.py
+test_answer.html
+test_pred.html
+.DS_STORE
