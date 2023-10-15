@@ -49,34 +49,42 @@ def process_Pix2Code_html_file(folder, input_file_name, output_file_name):
 
 
 def separate_WebUI2Code_html_css_files(folder, txt_file, output_html_file_name, output_css_file_name):
+    token_not_found = False
+    title_not_found = False
     with open(folder + txt_file, "r") as f:
         content = f.read()
 
-    # TODO: Handle cases where the start css token is missing
-
-    parts = content.split("/* START CSS */")
-    html_content = parts[0]
+    if "/* START CSS */" not in content:
+        token_not_found = True
+        html_content = content 
+        css_content = ""
+    else: 
+        parts = content.split("/* START CSS */")
+        html_content = parts[0]
+        css_content = parts[1]
 
     # Make sure to reference the stylesheet correctly inside the html file after the title tag
 
     # TODO: Handle cases where the title token is missing
-    html_content = html_content.replace(
-        '</title>', '</title> <link href="{fname}" rel="stylesheet"/>'.format(fname=output_css_file_name))
+    if "</title>" not in content:
+        title_not_found = True
+    else:
+        html_content = html_content.replace('</title>', '</title> <link href="{fname}" rel="stylesheet"/>'.format(fname=output_css_file_name), 1)
 
-    css_content = parts[1]
 
     with open(folder + output_html_file_name, "w") as f:
         f.write(html_content)
 
     with open(folder + output_css_file_name, "w") as f:
         f.write(css_content)
-    return
+
+    return token_not_found, title_not_found
 
 
 def process_files(folder, suffix=".txt", isPix2Code=False, isWebUI2Code=False):
     files_paths = [file for file in os.listdir(folder) if file.endswith(suffix)]
     for file_path in tqdm(files_paths):
-        if file_path.endswith("_processed" + suffix) or file_path.endswith("_complete" + suffix):
+        if file_path.endswith("_processed" + suffix) or file_path.endswith("_complete" + suffix) or file_path.endswith("_separated" + suffix):
             # Already processed
             continue
 
@@ -102,8 +110,9 @@ def process_files(folder, suffix=".txt", isPix2Code=False, isWebUI2Code=False):
                 suffix)[0] + "_separated.html"
             output_css_file_name = file_path.split(
                 suffix)[0] + "_separated.css"
-            separate_WebUI2Code_html_css_files(
+            token_not_found, title_not_found = separate_WebUI2Code_html_css_files(
                 folder, file_path, output_html_file_name, output_css_file_name)
+            output_file_path = output_html_file_name.split(".html")[0] + "_processed.html"
             errors_from_tidy = process_html(
                 folder + output_html_file_name, folder + output_file_path)
 
@@ -111,9 +120,20 @@ def process_files(folder, suffix=".txt", isPix2Code=False, isWebUI2Code=False):
                 dict_tmp = {}
                 with open(folder + file_path.split("_pred")[0] + ".json", "w") as f:
                     dict_tmp["errors"] = cleanup_errors_from_tidy(errors_from_tidy)
+                    dict_tmp["token_not_found"] = token_not_found
+                    dict_tmp["title_not_found"] = title_not_found
                     json.dump(dict_tmp, f, indent=2)
+            else:
+                dict_tmp = {}
+                with open(folder + file_path.split("_answer")[0] + "_answer.json", "w") as f:
+                    dict_tmp["errors"] = cleanup_errors_from_tidy(errors_from_tidy)
+                    dict_tmp["token_not_found"] = token_not_found
+                    dict_tmp["title_not_found"] = title_not_found
+                    json.dump(dict_tmp, f, indent=2)
+            
 
         else:
+            output_file_path = file_path.split(suffix)[0] + "_processed.html"
             errors_from_tidy = process_html(
                 folder + file_path, folder + output_file_path)
             if file_path.endswith("pred" + suffix):
@@ -142,14 +162,17 @@ def cleanup_errors_from_tidy(errors_original):
     for line in lines:
         if line.startswith("Info"):
             break
-        position = line.split("-")[0].rstrip()
-        error_type = line.split("-")[1].split(":")[0].strip()
-        error_message = line.split("-")[1].split(":")[1].lstrip()
-        error = {}
-        error["position"] = position
-        error["error_type"] = error_type
-        error["error_message"] = error_message
-        errors.append(error)
+        try:
+            position = line.split("-")[0].rstrip()
+            error_type = line.split("-")[1].split(":")[0].strip()
+            error_message = line.split("-")[1].split(":")[1].lstrip()
+            error = {}
+            error["position"] = position
+            error["error_type"] = error_type
+            error["error_message"] = error_message
+            errors.append(error)
+        except Exception:
+            errors.append(line)
 
     return errors
 

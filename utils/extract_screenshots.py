@@ -13,7 +13,8 @@ COLAB = False
 #CHROME_DRIVER_PATH = './chromedriver/linux-116.0.5793.0/chromedriver-linux64/chromedriver'
 CHROME_PATH = './chrome/linux-116.0.5793.0/chrome-linux64/chrome'
 
-CHROME_DRIVER_PATH = '../../chromedriver/mac_arm-116.0.5845.96/chromedriver-mac-arm64/chromedriver'
+CHROME_DRIVER_PATH = './chromedriver/mac_arm-118.0.5993.70/chromedriver-mac-arm64/chromedriver'
+ASSETS_PATH = "./utils/webgenerator/Assets/"
 
 def get_screenshot(html_file_path):
     """ Get Screenshot of website URL passed as argument, and save it """
@@ -58,18 +59,24 @@ def get_screenshot(html_file_path):
 
 def extract_screenshots(folder, isWebGenerator=False):
     if isWebGenerator:
+        css_folder_path = "/".join(folder.split("/")[0:-2]) + "/"
+        print("css_folder_path: ", css_folder_path)
         screen_shutter = ScreenShutter(full_screenshot=False, show_progress=False, input_path=folder,
-                                    output_path="results/", assets_path="utils/webgenerator/Assets/", driver_path=CHROME_DRIVER_PATH)
+                                    output_path=css_folder_path, assets_path=ASSETS_PATH, driver_path=CHROME_DRIVER_PATH)
         screen_shutter.capture_and_save()
     else:
         list_files = os.listdir(folder)
-        filtered_files = [file for file in list_files if file.endswith('.html')]
+        filtered_files = [file for file in list_files if file.endswith('.html') and not file.endswith("separated.html")]
 
         # Iterate through all files in the given folder
         for filename in tqdm(filtered_files):
-            if filename.endswith('.html'):
-                if not os.path.exists(folder + filename.replace(".html", ".png")):
-                        get_screenshot(os.path.join(folder, filename))
+            try: 
+                if filename.endswith('.html'):
+                    if not os.path.exists(folder + filename.replace(".html", ".png")):
+                            get_screenshot(os.path.join(folder, filename))
+            except Exception as e:
+                print("Exception found for file: ", filename)
+                print(e)
 
 
 if __name__ == "__main__":

@@ -29,7 +29,7 @@ class ScreenShutter:
 		self.driver_path = driver_path
 
 	def capture_and_save(self,max_shoots=100000):
-		print("Generating Screenshots...")
+		#print("Generating Screenshots...")
 		# get a list of all the files to open
 		window_width = self.window_size[0]
 		window_height = self.window_size[1]
@@ -53,6 +53,12 @@ class ScreenShutter:
 		with open(self.assets_path+"extract_meta.js", "r") as f:
 			scripts["extract_meta"] = f.read()
 
+		files_with_problems = [
+			"/Users/giuseppesalvi/Desktop/Tesi/tools/webUI2code-experiments/results/synthBootstrap/synthBootstrap_mini/rw_863_pred_processed.html",
+			"/Users/giuseppesalvi/Desktop/Tesi/tools/webUI2code-experiments/results/synthBootstrap/synthBootstrap_mini/rw_28_pred_processed.html",
+			"/Users/giuseppesalvi/Desktop/Tesi/tools/webUI2code-experiments/results/synthBootstrap/synthBootstrap_mini/rw_395_pred_processed.html",
+			"/Users/giuseppesalvi/Desktop/Tesi/tools/webUI2code-experiments/results/synthBootstrap/synthBootstrap_mini/rw_787_pred_processed.html"
+		]
 		for html_file in tqdm(html_file_list):
 			if os.path.isfile(self.output_path + os.path.basename(html_file)[:-5] + '.png'):       
 				count += 1           
