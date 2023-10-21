@@ -1,7 +1,4 @@
 chrome/
 chromedriver/
 utils/extract_predictions_and_answers.py
-.DS_STORE
-results/.DS_STORE
-results/*
-results_samples/*
+*.DS_STORE
