@@ -1,9 +1,7 @@
-results/pix2code/output_test_pix2code.log
 chrome/
 chromedriver/
 utils/extract_predictions_and_answers.py
-test_answer.html
-test_pred.html
 .DS_STORE
+results/.DS_STORE
 results/*
 results_samples/*
