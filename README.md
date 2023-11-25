@@ -1,6 +1,7 @@
 # Web UI code generation: a transformer-based model applied to real-world screenshots
 This repository contains the code for my Master's Degree Thesis in Computer Engineering at Politecnico di Torino.
 
+[Link](https://webthesis.biblio.polito.it/28535/) to the thesis.
 [This](https://github.com/giuseppesalvi/webUI2code/blob/main/Summary_Web_UI_code_generation__a_transformer_based_model_applied_to_real_world_screenshots.pdf) file contains the summary of the thesis.
 
 ## Website screenshot and code extraction tool
